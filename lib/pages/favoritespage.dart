@@ -14,7 +14,7 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   //  var images = [
-    
+
   //   "https://images.pexels.com/photos/3326103/pexels-photo-3326103.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
   //   "https://images.pexels.com/photos/3381028/pexels-photo-3381028.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   //   "https://images.pexels.com/photos/775483/pexels-photo-775483.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
@@ -25,9 +25,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
   // ];
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _db = Firestore.instance;
+  final  _db = FirebaseFirestore.instance;
 
-  FirebaseUser user;
+  User user;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   void _getUser() async {
-    FirebaseUser u = await _auth.currentUser();
+    User u = await _auth.currentUser;
     setState(() {
       user = u;
     });
@@ -54,19 +54,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
           Container(
             alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(top: 5, left: 20,bottom: 20,),
+            margin: EdgeInsets.only(
+              top: 5,
+              left: 20,
+              bottom: 20,
+            ),
             child: Text(
               "Favorites",
               textAlign: TextAlign.start,
-              style:TextStyle(
+              style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
               ),
             ),
           ),
-          
-          
+
           // StaggeredGridView.countBuilder(
           //   crossAxisCount: 2,
           //   shrinkWrap: true,
@@ -86,71 +89,68 @@ class _FavoritesPageState extends State<FavoritesPage> {
           //   },
           // ),
 
-          if(user != null) ...[
-
-          StreamBuilder(
-            stream: _db
-                .collection("users").document(user.uid)
-                .collection("favorites")
-                .orderBy("date", descending: true)
-                .snapshots(),
-            builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasData) {
-                return StaggeredGridView.countBuilder(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                  itemCount: snapshot.data.documents.length,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 15,
-                  ),
-                  itemBuilder: (ctx, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WallpaperViewPage(
-                                      data: snapshot
-                                          .data.documents[index],
-                                    )));
-                      },
-                      child: Hero(
-                        tag: snapshot.data.documents[index].data["url"],
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          // child: Image(
-                          //   image: NetworkImage(images[index]),
-                          // ),
-                          child: CachedNetworkImage(
-                            placeholder: (ctx, url) => Image(
-                              image: AssetImage("assets/placeholder.jpg"),
-                            ),
-                            imageUrl:
-                                snapshot.data.documents[index].data["url"],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+          if (user != null) ...[
+            StreamBuilder(
+              stream: _db
+                  .collection("users")
+                  .doc(user.uid)
+                  .collection("favorites")
+                  .orderBy("date", descending: true)
+                  .snapshots(),
+              builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  // return StaggeredGridView.countBuilder(
+                  //   crossAxisCount: 2,
+                  //   shrinkWrap: true,
+                  //   physics: NeverScrollableScrollPhysics(),
+                  //   staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                  //   itemCount: snapshot.data.docs.length,
+                  //   mainAxisSpacing: 20,
+                  //   crossAxisSpacing: 20,
+                  //   padding: EdgeInsets.symmetric(
+                  //     horizontal: 15,
+                  //   ),
+                  //   itemBuilder: (ctx, index) {
+                  //     return InkWell(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //                 builder: (context) => WallpaperViewPage(
+                  //                       data: snapshot.data.docs[index],
+                  //                     )));
+                  //       },
+                  //       child: Hero(
+                  //         tag: snapshot.data.docs[index].data["url"],
+                  //         child: ClipRRect(
+                  //           borderRadius: BorderRadius.circular(10),
+                  //           // child: Image(
+                  //           //   image: NetworkImage(images[index]),
+                  //           // ),
+                  //           child: CachedNetworkImage(
+                  //             placeholder: (ctx, url) => Image(
+                  //               image: AssetImage("assets/placeholder.jpg"),
+                  //             ),
+                  //             imageUrl:
+                  //                 snapshot.data.docs[index].data["url"],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // );
+                }
+                return SpinKitChasingDots(
+                  color: primaryColor,
+                  size: 50,
                 );
-              }
-              return SpinKitChasingDots(
-                color: primaryColor,
-                size: 50,
-              );
-            },
-          ),
-          
+              },
+            ),
           ],
 
           SizedBox(
             height: 80,
           ),
-
         ],
       ),
     ));

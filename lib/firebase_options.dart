@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -54,9 +51,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA10A-JbnTaS0On0Lf5bnl0jBASqOCgnrY',
-    googleAppID: '1:792931015701:android:4c9b218503e90c3989021c',
-    gcmSenderID: '792931015701',
-    projectID: 'wallyapp-1a7e4',
+    appId: '1:792931015701:android:4c9b218503e90c3989021c',
+    messagingSenderId: '792931015701',
+    projectId: 'wallyapp-1a7e4',
     storageBucket: 'wallyapp-1a7e4.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyA1RjE7VMig0IjtJV1jc0dHtnGsPYvvMaI',
+    appId: '1:792931015701:ios:00fa660222c4f86a89021c',
+    messagingSenderId: '792931015701',
+    projectId: 'wallyapp-1a7e4',
+    storageBucket: 'wallyapp-1a7e4.appspot.com',
+    iosClientId: '792931015701-m0crsg770cgrgg60vmks931v24b9t3s9.apps.googleusercontent.com',
+    iosBundleId: 'com.example.wallyapp',
   );
 }

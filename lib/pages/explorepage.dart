@@ -22,7 +22,7 @@ class _ExplorePageState extends State<ExplorePage> {
   //   "https://images.pexels.com/photos/3389722/pexels-photo-3389722.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
   // ];
 
-  final Firestore _db = Firestore.instance;
+  final  _db = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -57,47 +57,47 @@ class _ExplorePageState extends State<ExplorePage> {
                 .snapshots(),
             builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
-                return StaggeredGridView.countBuilder(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                  itemCount: snapshot.data.documents.length,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 15,
-                  ),
-                  itemBuilder: (ctx, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WallpaperViewPage(
-                                      data: snapshot
-                                          .data.documents[index],
-                                    )));
-                      },
-                      child: Hero(
-                        tag: snapshot.data.documents[index].data["url"],
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          // child: Image(
-                          //   image: NetworkImage(images[index]),
-                          // ),
-                          child: CachedNetworkImage(
-                            placeholder: (ctx, url) => Image(
-                              image: AssetImage("assets/placeholder.jpg"),
-                            ),
-                            imageUrl:
-                                snapshot.data.documents[index].data["url"],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
+                // return StaggeredGridView.countBuilder(
+                //   crossAxisCount: 2,
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                //   itemCount: snapshot.data.docs.length,
+                //   mainAxisSpacing: 20,
+                //   crossAxisSpacing: 20,
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 15,
+                //   ),
+                //   itemBuilder: (ctx, index) {
+                //     return InkWell(
+                //       onTap: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (context) => WallpaperViewPage(
+                //                       data: snapshot
+                //                           .data.docs[index],
+                //                     )));
+                //       },
+                //       child: Hero(
+                //         tag: snapshot.data.docs[index].data["url"],
+                //         child: ClipRRect(
+                //           borderRadius: BorderRadius.circular(10),
+                //           // child: Image(
+                //           //   image: NetworkImage(images[index]),
+                //           // ),
+                //           child: CachedNetworkImage(
+                //             placeholder: (ctx, url) => Image(
+                //               image: AssetImage("assets/placeholder.jpg"),
+                //             ),
+                //             imageUrl:
+                //                 snapshot.data.docs[index].data["url"],
+                //           ),
+                //         ),
+                //       ),
+                //     );
+                //   },
+                // );
               }
               return SpinKitChasingDots(
                 color: primaryColor,

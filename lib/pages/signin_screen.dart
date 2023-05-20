@@ -13,7 +13,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final Firestore _db = Firestore.instance;
+  final _db = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -103,23 +103,21 @@ class _SignInScreenState extends State<SignInScreen> {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
+      final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final FirebaseUser user =
-          (await _auth.signInWithCredential(credential)).user;
-      print("signed in " + user.providerId);
+      final User user = (await _auth.signInWithCredential(credential)).user;
+      // print("signed in " + user.providerId);
 
-      _db.collection("users").document(user.uid).setData({
+      _db.collection("users").doc(user.uid).set({
         "displayName": user.displayName,
         "email": user.email,
         "uid": user.uid,
-        "photoUrl": user.photoUrl,
+        "photoUrl": user.photoURL,
         "lastSignIn": DateTime.now(),
-      }, merge: true);
-
+      }, SetOptions(merge: true));
     } catch (e) {
       print(e.message);
     }

@@ -15,9 +15,9 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _user;
+  User _user;
 
-  final Firestore _db = Firestore.instance;
+  final _db = FirebaseFirestore.instance;
 
   // var images = [
 
@@ -37,7 +37,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void fetchUserData() async {
-    FirebaseUser u = await _auth.currentUser();
+    User u = await _auth.currentUser;
     setState(() {
       _user = u;
     });
@@ -60,7 +60,7 @@ class _AccountPageState extends State<AccountPage> {
                     child: FadeInImage(
                       width: 200,
                       height: 200,
-                      image: NetworkImage("${_user.photoUrl}"),
+                      image: NetworkImage("${_user.photoURL}"),
                       placeholder: AssetImage("assets/placeholder.jpg"),
                       fit: BoxFit.cover,
                     ),
@@ -76,7 +76,7 @@ class _AccountPageState extends State<AccountPage> {
                     height: 20,
                   ),
 
-                  RaisedButton(
+                  MaterialButton(
                     onPressed: () {
                       _auth.signOut();
                     },
@@ -96,12 +96,12 @@ class _AccountPageState extends State<AccountPage> {
                         IconButton(
                           icon: Icon(Icons.add),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddWallpaperScreen(),
-                                  fullscreenDialog: true,
-                                ));
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => AddWallpaperScreen(),
+                            //       fullscreenDialog: true,
+                            //     ));
                           },
                         ),
                       ],
@@ -135,92 +135,97 @@ class _AccountPageState extends State<AccountPage> {
                         .snapshots(),
                     builder: (ctx, AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.hasData) {
-                        if(snapshot.data.documents.isNotEmpty) {
-                            return StaggeredGridView.countBuilder(
-                          crossAxisCount: 2,
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          staggeredTileBuilder: (int index) =>
-                              StaggeredTile.fit(1),
-                          itemCount: snapshot.data.documents.length,
-                          mainAxisSpacing: 20,
-                          crossAxisSpacing: 20,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15,
-                          ),
-                          itemBuilder: (ctx, index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WallpaperViewPage(
-                                      data: snapshot
-                                          .data.documents[index],
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Stack(
-                                children: <Widget>[
-                                  Hero(
-                                    tag: snapshot.data.documents[index].data["url"],
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      // child: Image(
-                                      //   image: NetworkImage(images[index]),
-                                      // ),
-                                      child: CachedNetworkImage(
-                                        placeholder: (ctx, url) => Image(
-                                          image:
-                                              AssetImage("assets/placeholder.jpg"),
-                                        ),
-                                        imageUrl: snapshot
-                                            .data.documents[index].data["url"],
+                        if (snapshot.data.docs.isNotEmpty) {
+                          return StaggeredGridView.countBuilder(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            staggeredTileBuilder: (int index) =>
+                                StaggeredTile.fit(1),
+                            itemCount: snapshot.data.docs.length,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            itemBuilder: (ctx, index) {
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WallpaperViewPage(
+                                        data: snapshot.data.docs[index],
                                       ),
                                     ),
-                                  ),
-
-                                  IconButton(
-                                    onPressed: (){
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) {
-                                          return AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(18),
-                                            ),
-                                            title: Text("Confirmation"),
-                                            content: Text("Are you sure, you are deleting wallpaper"),
-                                            actions: <Widget>[
-                                              RaisedButton(
-                                                child: Text("Cancel"),
-                                                onPressed: () {
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                              ),
-                                              RaisedButton(
-                                                child: Text("DELETE"),
-                                                onPressed: () {
-                                                  _db.collection("wallpapers")
-                                                  .document(snapshot.data.documents[index].documentID)
-                                                  .delete();
-                                                  Navigator.of(ctx).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                      );
-                                    },
-                                    icon: Icon(Icons.delete,color: Colors.red,),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      
+                                  );
+                                },
+                                child: Stack(
+                                  children: <Widget>[
+                                    // Hero(
+                                    //   tag:
+                                    //       snapshot.data.docs[index].data["url"],
+                                    //   child: ClipRRect(
+                                    //     borderRadius: BorderRadius.circular(10),
+                                    //     // child: Image(
+                                    //     //   image: NetworkImage(images[index]),
+                                    //     // ),
+                                    //     child: CachedNetworkImage(
+                                    //       placeholder: (ctx, url) => Image(
+                                    //         image: AssetImage(
+                                    //             "assets/placeholder.jpg"),
+                                    //       ),
+                                    //       imageUrl: snapshot
+                                    //           .data.docs[index].data["url"],
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (ctx) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(18),
+                                                ),
+                                                title: Text("Confirmation"),
+                                                content: Text(
+                                                    "Are you sure, you are deleting wallpaper"),
+                                                actions: <Widget>[
+                                                  MaterialButton(
+                                                    child: Text("Cancel"),
+                                                    onPressed: () {
+                                                      Navigator.of(ctx).pop();
+                                                    },
+                                                  ),
+                                                  MaterialButton(
+                                                    child: Text("DELETE"),
+                                                    onPressed: () {
+                                                      _db
+                                                          .collection(
+                                                              "wallpapers")
+                                                          .doc(snapshot.data
+                                                              .docs[index].id)
+                                                          .delete();
+                                                      Navigator.of(ctx).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
                         } else {
                           return Text("Upload wallpaper to see here...");
                         }
